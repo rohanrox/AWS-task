@@ -1,0 +1,122 @@
+Name: Rohan Aher
+Date: 07/01/2021
+
+AWS Task:
+
+
+1. DNS site failover using custom health/process check lambda script to monitor running process on instance(health check) and update route53 dns record if process goes down.
+
+
+Not Sure of this question,
+
+But Generally,For  Route 53 DNS failover:
+
+Route 53 DNS is done with Elastic Load Balancing(ELB) endpoints. 
+We can configure Health checks in ELB Load Balancer and Route53 ,so whenever the instance gets unhealthy status, it will pass it to new instance.
+And at the route53 will need to create an ALIAS record that points to your load balancer and need to set Routing Policy choosing fail over. 
+
+For Instance health checkup,
+
+We can configure CloudWatch Events to check EC2 health check.
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+2. Consider a monolithic java application stack. Apache Web Server, Apache Tomcat application server with redis, Active MQ ,Oracle and MongoDB backend. Propose a solution to migrate this application stack to AWS. Mention all the AWS services you would use and how you would maintain HA and Load Balancing (consider app to be stateless).
+ Mention rationale for each design decision. 
+
+Following is the process and serives used when migrating any Application to AWS. 
+ 
+A.   Virtual Private Cloud (VPC)
+  
+ 1. Need to configure network as per Client requirement i.e. CIDR details, no. of Private Subnets ,no. of Public Subnets.
+ 
+ 2. NAT GATEWAY >> To get Outbound traffic on Database for updating.
+ 
+ 2. Firewall Configuration:
+   
+   a. We can use WAF(Web Application Firewall) if required.
+   
+   b. CloudFront as a CDN(Content Delivery Network) >> if there is huge traffic on Server.
+   
+   c. IPs whitelisting and Blacklisting, can configure it at Security Group and Network Access Control List.
+ 
+B. Elastic Beanstalk/Elastic Cloud Compute(EC2)
+ 
+ 1. If Client doesn't need to manage Servers then they can go for Managed Service Elastic Beanstalk and can install Apache and Tomcat.
+ 
+ 2. If they want to host Apache and Tomcat application on Server then Elastic Cloud Compute will do.
+ 
+ 3. Autoscaling and Application Load Balancer is used for High Availability.
+ 
+  Case 1 : For HTTP and HTTPS , we can use ApplicationLoadBalancer.
+  Case 2 : For Custom Port, then need to go for Network Load Balancer.
+ 
+ 4. Also can use Amazon Server Migration Service to migrate Application from on-premise to AWSCloud.
+
+   
+C. Relational Databases(RDS):
+ 
+ a. Oracle DB is available on RDS so need to configure EC2 server for it.
+ 
+ b. Mongodb isntg available on AWS but there is another Database as an alternative i.e Dynamodb which is managed by AWS.
+  
+  If Client isnt interested for Dynamodb then we can create EC2 instance for Mongodb as per requirement.
+  
+ c. AWS DATABASE MIGRATION SERVICE : We can migrate the same data from on-premise to AWS cloud.
+ 
+
+D.  STORAGE:
+
+1. Simple Storage Service(S3)
+
+>> S3 is used for storing long term data i.e backup , application logs,OS logs,Server logs, Database backup, its logs and retention policies.
+
+2. Elastic File system(EFS).
+
+>> If the client need a common disk to more than one servers then we can mount EFS.
+
+E. Elastic Cache with Redis.
+
+For Stateless application >>  Storing session information which are not stored in Elastic Cloud Compute.	
+
+F. Amazon MQ Service ( For Active MQ which is on On-Premise)
+
+Amazon MQ is a fully managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS.
+
+G. Route 53:
+
+For DNS Resolution.
+
+H. CLOUD TRAIL AND CLOUD WATCH:
+
+1. CloudWatch: To get the metrics of the instance and databases, we can configure Cloudwatch for Load Testing and can create alarms if any of the servers get down.
+
+2. CloudTrail: It provides event history of  AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command line tools, and other AWS services.
+  
+--------------------------------------------------------------------------------------------------------------------------------------
+  
+3. Steps to control Cost of an organization infrastructure from AWS point of view. 
+
+1. Trusted Advisor service will monitor all the services on the AWS, so on monthly analysis we can recognize which services,instance, its volumes are not used can be deleted and also mentions the Cost of the Services,so then we can optimize it.
+
+2. CloudWatch used as for monitoring to get the instance metrics ,so then we can upgrade and downgrade the instance type as per requirement. 
+
+3. Autoscaling: It will play a major for servers ,if one server gets down then another server will get up and therefore dont need to make active all the time.
+ 
+4. S3 Storage: We can transfer the data from Infrequent Class storage to Glacier.It would optimize the cost. 
+
+5. Reserved instance: Client can used reserved instance for long term application rather than On-demand instance ,so it would save the cost.
+
+6. Lambda: Configuring the Servers ON/OFF time ,so it would save the cost as per an hour for on demand instaces.
+ 
+ 
+ 
+ 
+ 
+
+ 
+   
+ 
+ 
